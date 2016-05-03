@@ -10,35 +10,35 @@ But this require the oracle client for which I have a conda package so I added t
 
 3. Next the `cx_Oracle.so` is built but the rpath is not correctly set - I thought conda automatically handles this part. Do this manually as follows
 
-```
-#!/bin/bash
-
-NAME=cx_oracle-5.2.1-py27_1
-TNAME=$NAME'.tar'
-BNAME=$NAME'.tar.bz2'
-ENAME=cx_Oracle-5.2.1-py2.7-macosx-10.5-x86_64.egg
-
-bunzip2 $BNAME
-mkdir tmp
-cp $TNAME tmp/
-cd tmp
-tar xvf $TNAME
-
-cd lib/python*/site-packages/
-mv $ENAME $ENAME'.z'
-mkdir $ENAME && mv cx_Oracle*.egg.z $ENAME 
-cd $ENAME && unzip *.egg
-rm *.egg
-
-install_name_tool -add_rpath @loader_path/../../../ cx_Oracle.so
-
-# also need to update info/files before creating package
-#cd ../../../../
-#rm $TNAME
-#tar cvf $TNAME info/ lib/
-#bzip2 -z $TNAME
-#mv $BNAME ../.
-```
+  ```
+  #!/bin/bash
+  
+  NAME=cx_oracle-5.2.1-py27_1
+  TNAME=$NAME'.tar'
+  BNAME=$NAME'.tar.bz2'
+  ENAME=cx_Oracle-5.2.1-py2.7-macosx-10.5-x86_64.egg
+  
+  bunzip2 $BNAME
+  mkdir tmp
+  cp $TNAME tmp/
+  cd tmp
+  tar xvf $TNAME
+  
+  cd lib/python*/site-packages/
+  mv $ENAME $ENAME'.z'
+  mkdir $ENAME && mv cx_Oracle*.egg.z $ENAME 
+  cd $ENAME && unzip *.egg
+  rm *.egg
+  
+  install_name_tool -add_rpath @loader_path/../../../ cx_Oracle.so
+  
+  # also need to update info/files before creating package
+  #cd ../../../../
+  #rm $TNAME
+  #tar cvf $TNAME info/ lib/
+  #bzip2 -z $TNAME
+  #mv $BNAME ../.
+  ```
 
 4. Finally, I'm not able to test with `conda install --use-local cx_oracle` since the md5 for the file that was created by conda-build is different from this modified file and it expects the file that was created by conda-build.
 
